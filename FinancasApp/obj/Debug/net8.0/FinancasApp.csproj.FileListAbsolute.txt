@@ -145,4 +145,8 @@
 /home/paulo/projetos/3-financasapp-dotnet/FinancasApp/bin/Debug/net8.0/runtimes/win/lib/net6.0/System.Security.Cryptography.ProtectedData.dll
 /home/paulo/projetos/3-financasapp-dotnet/FinancasApp/bin/Debug/net8.0/runtimes/win/lib/net6.0/System.Windows.Extensions.dll
 /home/paulo/projetos/3-financasapp-dotnet/FinancasApp/obj/Debug/net8.0/FinancasApp.sourcelink.json
-/home/paulo/projetos/3-financasapp-dotnet/FinancasApp/obj/Debug/net8.0/Financas.3183B96C.Up2Date
+/home/paulo/projetos/3-financasapp-dotnet/FinancasApp/bin/Debug/net8.0/FinancasApp.staticwebassets.runtime.json
+/home/paulo/projetos/3-financasapp-dotnet/FinancasApp/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/home/paulo/projetos/3-financasapp-dotnet/FinancasApp/bin/Debug/net8.0/Microsoft.AspNetCore.Identity.UI.dll
+/home/paulo/projetos/3-financasapp-dotnet/FinancasApp/bin/Debug/net8.0/Microsoft.Extensions.FileProviders.Embedded.dll
+/home/paulo/projetos/3-financasapp-dotnet/FinancasApp/obj/Debug/net8.0/FinancasApp.csproj.CopyComplete

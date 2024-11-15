@@ -11,7 +11,7 @@ public class Entry
     public Guid? ExpenseCategoryId { get; set; }
     public ExpenseCategory? ExpenseCategory { get; set; }
     public Guid BankAccountId { get; set; }
-    public Guid UserId { get; set; }
+    public string UserId { get; set; }
     public string? Note { get; set; }
     public bool? Payed { get; set; }
     public DateTime? DateWhenPayed { get; set; }

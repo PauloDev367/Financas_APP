@@ -11,14 +11,6 @@ public class UserConf : IEntityTypeConfiguration<User>
     {
         builder.ToTable("users");
 
-        builder.HasKey(x => x.Id);
-        builder.Property(x => x.Id)
-            .ValueGeneratedOnAdd()
-            .IsRequired();
-
-        builder.Property(x => x.Password)
-            .HasColumnType("TEXT")
-            .IsRequired();
 
         builder.Property(e => e.CreatedAt)
                     .HasDefaultValueSql("CURRENT_TIMESTAMP")
@@ -31,8 +23,5 @@ public class UserConf : IEntityTypeConfiguration<User>
         builder.HasMany(x => x.BankAccounts)
             .WithOne(b => b.User)
             .HasForeignKey(b => b.UserId);
-
-        builder.HasIndex(x => x.Email).IsUnique();
-
     }
 }
