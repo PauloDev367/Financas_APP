@@ -10,4 +10,7 @@ public class IncomeCategory
     public string IconBg { get; set; }
     public string IconColor { get; set; }
     public Guid UserId { get; set; }
+    public List<Entry> Entries { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }
