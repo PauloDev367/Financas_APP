@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using FinancasApp.Extensions;
+using FinancasApp.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ builder.Services.LoadDependencies();
 builder.Services.ConfigureIdentityAuth(builder.Configuration);
 
 var app = builder.Build();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

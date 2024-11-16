@@ -296,7 +296,7 @@
 /home/paulo/projetos/1-financasapp/FinancasApp/obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.FinancasApp.props
 /home/paulo/projetos/1-financasapp/FinancasApp/obj/Debug/net8.0/staticwebassets.pack.json
 /home/paulo/projetos/1-financasapp/FinancasApp/obj/Debug/net8.0/scopedcss/bundle/FinancasApp.styles.css
-/home/paulo/projetos/1-financasapp/FinancasApp/obj/Debug/net8.0/FinancasApp.csproj.CopyComplete
+/home/paulo/projetos/1-financasapp/FinancasApp/obj/Debug/net8.0/Financas.3183B96C.Up2Date
 /home/paulo/projetos/1-financasapp/FinancasApp/obj/Debug/net8.0/FinancasApp.dll
 /home/paulo/projetos/1-financasapp/FinancasApp/obj/Debug/net8.0/refint/FinancasApp.dll
 /home/paulo/projetos/1-financasapp/FinancasApp/obj/Debug/net8.0/FinancasApp.pdb
