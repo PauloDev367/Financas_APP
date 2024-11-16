@@ -1,114 +1,69 @@
-using System;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using FinancasApp.Configurations;
+using System.Text;
 using FinancasApp.Controllers.V1.Dtos.Request;
-using FinancasApp.Controllers.V1.Dtos.Response;
 using FinancasApp.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 
 namespace FinancasApp.Services;
 
 public class IdentityService
 {
-    private readonly SignInManager<User> _signInManager;
-    private readonly UserManager<User> _userManager;
-    private readonly JwtOptions _jwtOptions;
 
-    public IdentityService(SignInManager<User> signInManager, UserManager<User> userManager, IOptions<JwtOptions> jwtOptions)
+    private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
+    private readonly IConfiguration _configuration;
+
+    public IdentityService(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
     {
-        _signInManager = signInManager;
         _userManager = userManager;
-        _jwtOptions = jwtOptions.Value;
+        _signInManager = signInManager;
+        _configuration = configuration;
     }
 
-    public async Task<ResponseBase<SimpleUserResponse>> CreateNewUser(CreateNewUserRequest request)
+    [HttpPost("register")]
+    public async Task<IdentityResult?> Register(CreateNewUserRequest request)
     {
-        var identityUser = new User
+        var user = new User { UserName = request.Username, Email = request.Email };
+        var result = await _userManager.CreateAsync(user, request.Password);
+
+        return result;
+    }
+
+    [HttpPost("login")]
+    public async Task<string?> Login(UserLoginRequest request)
+    {
+        var result = await _signInManager.PasswordSignInAsync(request.Username, request.Password, false, false);
+        if (result.Succeeded)
         {
-            UserName = request.Email,
-            Email = request.Email,
-            EmailConfirmed = true
+            var user = await _userManager.FindByNameAsync(request.Username);
+            var token = GenerateJwtToken(user);
+            return token;
+        }
+
+        return null;
+    }
+
+    private string GenerateJwtToken(User user)
+    {
+        var claims = new[]
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
-        var response = new ResponseBase<SimpleUserResponse>();
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var result = await _userManager.CreateAsync(identityUser, request.Senha);
-        if (result.Succeeded)
-        {
-            await _userManager.SetLockoutEnabledAsync(identityUser, false);
-            response.Success = new SimpleUserResponse(identityUser);
-        }
+        var token = new JwtSecurityToken(
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(30),
+            signingCredentials: creds);
 
-        if (result.Errors.Count() > 0)
-        {
-            response.SetErros(result.Errors.Select(er => er.Description));
-        }
-
-        return response;
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
-
-    public async Task<ResponseBase<object>> Login(UserLoginRequest request)
-    {
-        var result = await _signInManager.PasswordSignInAsync(request.Email, request.Senha, false, true);
-
-        var response = new ResponseBase<object>();
-        if (result.Succeeded)
-        {
-            var token = await GenerateToken(request.Email);
-            response.Success = new { token };
-        }
-
-        if (!result.Succeeded)
-        {
-            if (result.IsLockedOut)
-                response.AddError("Conta bloqueada");
-            else if (result.IsNotAllowed)
-                response.AddError("Essa conta não tem permissão para essa ação");
-            else if (result.RequiresTwoFactor)
-                response.AddError("É necessário confirmar o login com o código de 2 fatores");
-            else
-                response.AddError("E-mail or password invalid");
-        }
-
-        return response;
-    }
-
-    private async Task<string> GenerateToken(string email)
-    {
-        var user = await _userManager.FindByEmailAsync(email);
-        var tokenClaims = await GetClaims(user);
-
-        var expDate = DateTime.Now.AddSeconds(_jwtOptions.Expiration);
-        var jwt = new JwtSecurityToken(
-            issuer: _jwtOptions.Issuer,
-            audience: _jwtOptions.Audience,
-            claims: tokenClaims,
-            notBefore: DateTime.Now,
-            expires: expDate,
-            signingCredentials: _jwtOptions.SigningCredentials
-        );
-        var token = new JwtSecurityTokenHandler().WriteToken(jwt);
-
-        return token;
-    }
-
-    private async Task<IList<Claim>> GetClaims(User user)
-    {
-        var claims = await _userManager.GetClaimsAsync(user);
-        var roles = await _userManager.GetRolesAsync(user);
-
-        claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()));
-        claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
-        claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-        claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, DateTime.Now.ToString()));
-        claims.Add(new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToString()));
-
-        foreach (var role in roles)
-            claims.Add(new Claim("role", role));
-
-        return claims;
-    }
-
 }

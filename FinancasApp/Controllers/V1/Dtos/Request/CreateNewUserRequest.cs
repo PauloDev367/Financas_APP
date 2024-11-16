@@ -5,14 +5,7 @@ namespace FinancasApp.Controllers.V1.Dtos.Request;
 
 public class CreateNewUserRequest
 {
-    [Required]
-    public string Nome { get; set; }
-    [Required]
-    [EmailAddress]
+    public string Username { get; set; }
+    public string Password { get; set; }
     public string Email { get; set; }
-    [Required]
-    [StringLength(50)]
-    public string Senha { get; set; }
-    [Compare(nameof(Senha))]
-    public string SenhaConfirmacao { get; set; }
 }

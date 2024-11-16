@@ -1,7 +1,6 @@
-using System;
+using Microsoft.AspNetCore.Mvc;
 using FinancasApp.Controllers.V1.Dtos.Request;
 using FinancasApp.Services;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FinancasApp.Controllers.V1;
 
@@ -17,25 +16,27 @@ public class AuthController : ControllerBase
         _identityService = identityService;
     }
 
-    [HttpPost("users")]
-    public async Task<IActionResult> Registrate([FromBody] CreateNewUserRequest request)
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] CreateNewUserRequest request)
     {
-        var user = await _identityService.CreateNewUser(request);
-        if (user.Errors.Count > 0)
-            return BadRequest(user);
-
-        return Ok(user);
+        var result = await _identityService.Register(request);
+        if (result.Succeeded)
+        {
+            return Ok(new { message = "User registered successfully" });
+        }
+        return BadRequest(result.Errors);
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
     {
-        var token = await _identityService.Login(request);
-        if (token.Errors.Count > 0)
+        var login = await _identityService.Login(request);
+        if (request != null)
         {
-            return BadRequest(token);
+            return Ok(new { login });
         }
-
-        return Ok(token);
+        return Unauthorized();
     }
+
+
 }

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/paulo/projetos/3-financasapp-dotnet/FinancasApp/FinancasApp.csproj": {}
+    "/home/paulo/projetos/1-financasapp/FinancasApp/FinancasApp.csproj": {}
   },
   "projects": {
-    "/home/paulo/projetos/3-financasapp-dotnet/FinancasApp/FinancasApp.csproj": {
+    "/home/paulo/projetos/1-financasapp/FinancasApp/FinancasApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/paulo/projetos/3-financasapp-dotnet/FinancasApp/FinancasApp.csproj",
+        "projectUniqueName": "/home/paulo/projetos/1-financasapp/FinancasApp/FinancasApp.csproj",
         "projectName": "FinancasApp",
-        "projectPath": "/home/paulo/projetos/3-financasapp-dotnet/FinancasApp/FinancasApp.csproj",
+        "projectPath": "/home/paulo/projetos/1-financasapp/FinancasApp/FinancasApp.csproj",
         "packagesPath": "/home/paulo/.nuget/packages/",
-        "outputPath": "/home/paulo/projetos/3-financasapp-dotnet/FinancasApp/obj/",
+        "outputPath": "/home/paulo/projetos/1-financasapp/FinancasApp/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/paulo/.nuget/NuGet/NuGet.Config"
