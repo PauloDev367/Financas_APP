@@ -1,10 +1,11 @@
 using System;
-using System.Data.Entity;
 using FinancasApp.Controllers.V1.Dtos.Request;
 using FinancasApp.Controllers.V1.Dtos.Response;
 using FinancasApp.Data;
 using FinancasApp.Exceptions;
 using FinancasApp.Models;
+using Microsoft.EntityFrameworkCore;
+
 using Microsoft.AspNetCore.Identity;
 
 namespace FinancasApp.Services;
@@ -20,9 +21,9 @@ public class BankAccountService
         _userManager = userManager;
     }
 
-    public async Task<BankAccount> CreateAsync(string userId, CreateBankAccountRequest request)
+    public async Task<CreatedBankAccountResponse> CreateAsync(string userEmail, CreateBankAccountRequest request)
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager.FindByEmailAsync(userEmail);
         if (user == null)
             throw new UnauthorizedActionException("You don't have the permission for this action");
 
@@ -35,13 +36,13 @@ public class BankAccountService
         bankAccount.UserId = user.Id;
 
         await _context.BankAccounts.AddAsync(bankAccount);
-
-        return bankAccount;
+        await _context.SaveChangesAsync();
+        return new CreatedBankAccountResponse(bankAccount);
     }
 
-    public async Task<BankAccount> UpdateAsync(string userId, UpdateBankAccountRequest request, Guid bankAccountId)
+    public async Task<CreatedBankAccountResponse> UpdateAsync(string userEmail, UpdateBankAccountRequest request, Guid bankAccountId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager.FindByEmailAsync(userEmail);
         if (user == null)
             throw new UnauthorizedActionException("You don't have the permission for this action");
 
@@ -59,12 +60,12 @@ public class BankAccountService
 
         _context.BankAccounts.Update(bankAccount);
         await _context.SaveChangesAsync();
-        return bankAccount;
+        return new CreatedBankAccountResponse(bankAccount);
     }
 
-    public async Task DeleteAsync(string userId, Guid bankAccountId)
+    public async Task DeleteAsync(string userEmail, Guid bankAccountId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager.FindByEmailAsync(userEmail);
         if (user == null)
             throw new UnauthorizedActionException("You don't have the permission for this action");
 
@@ -75,11 +76,12 @@ public class BankAccountService
             throw new ModelNotFoundException("Bank account not founded");
 
         _context.BankAccounts.Remove(bankAccount);
+        await _context.SaveChangesAsync();
     }
 
-    public async Task<BankAccount> GetOneAsync(string userId, Guid bankAccountId)
+    public async Task<CreatedBankAccountResponse> GetOneAsync(string userEmail, Guid bankAccountId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager.FindByEmailAsync(userEmail);
         if (user == null)
             throw new UnauthorizedActionException("You don't have the permission for this action");
 
@@ -89,27 +91,30 @@ public class BankAccountService
         if (bankAccount == null)
             throw new ModelNotFoundException("Bank account not founded");
 
-        return bankAccount;
+        return new CreatedBankAccountResponse(bankAccount);
     }
 
-    public async Task<PaginatedListResponse<BankAccount>> GetAllPaginatedAsync(int pageIndex, int pageSize, string userId)
+    public async Task<PaginatedListResponse<CreatedBankAccountResponse>> GetAllPaginatedAsync(int pageIndex, int pageSize, string userEmail)
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager.FindByEmailAsync(userEmail);
         if (user == null)
             throw new UnauthorizedActionException("You don't have the permission for this action");
 
+        var count = await _context.BankAccounts
+                                  .Where(b => b.UserId.Equals(user.Id))
+                                  .CountAsync();
+
         var players = await _context.BankAccounts
-                    .AsNoTracking()
-                    .OrderBy(b => b.Id)
-                    .Where(b => b.UserId.Equals(user.Id))
-                    .Skip((pageIndex - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync();
+            .AsNoTracking()
+            .Where(b => b.UserId.Equals(user.Id))
+            .OrderBy(b => b.Id)
+            .Skip((pageIndex - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
 
-        var count = await _context.BankAccounts.CountAsync();
-        var totalPages = (int)Math.Ceiling(count / (double)pageSize);
+        var data = players.Select(x => new CreatedBankAccountResponse(x)).ToList();
 
-        return new PaginatedListResponse<BankAccount>(players, pageIndex, totalPages);
+        return PaginatedListResponse<CreatedBankAccountResponse>.Create(data, pageIndex, pageSize, count);
     }
 
 }
