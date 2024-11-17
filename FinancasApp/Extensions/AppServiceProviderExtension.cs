@@ -9,6 +9,7 @@ public static class AppServiceProviderExtension
     {
         service.AddTransient<IdentityService, IdentityService>();
         service.AddScoped<BankAccountService>();
+        service.AddScoped<ExpenseCategoryService>();
 
     }
 
