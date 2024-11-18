@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "bvRCcrCLl/0=",
+  "dgSpecHash": "EHGSwi0KuLA=",
   "success": true,
-  "projectFilePath": "/home/paulo/projetos/1-financasapp/FinancasApp/FinancasApp.csproj",
+  "projectFilePath": "/home/paulo/projetos/1-appfinancas/FinancasApp/FinancasApp.csproj",
   "expectedPackageFiles": [
     "/home/paulo/.nuget/packages/azure.core/1.35.0/azure.core.1.35.0.nupkg.sha512",
     "/home/paulo/.nuget/packages/azure.identity/1.10.3/azure.identity.1.10.3.nupkg.sha512",

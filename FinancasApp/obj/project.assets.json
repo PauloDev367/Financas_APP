@@ -4820,11 +4820,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/paulo/projetos/1-financasapp/FinancasApp/FinancasApp.csproj",
+      "projectUniqueName": "/home/paulo/projetos/1-appfinancas/FinancasApp/FinancasApp.csproj",
       "projectName": "FinancasApp",
-      "projectPath": "/home/paulo/projetos/1-financasapp/FinancasApp/FinancasApp.csproj",
+      "projectPath": "/home/paulo/projetos/1-appfinancas/FinancasApp/FinancasApp.csproj",
       "packagesPath": "/home/paulo/.nuget/packages/",
-      "outputPath": "/home/paulo/projetos/1-financasapp/FinancasApp/obj/",
+      "outputPath": "/home/paulo/projetos/1-appfinancas/FinancasApp/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/paulo/.nuget/NuGet/NuGet.Config"

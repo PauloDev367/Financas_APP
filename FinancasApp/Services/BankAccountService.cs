@@ -101,8 +101,8 @@ public class BankAccountService
             throw new UnauthorizedActionException("You don't have the permission for this action");
 
         var count = await _context.BankAccounts
-                                  .Where(b => b.UserId.Equals(user.Id))
-                                  .CountAsync();
+            .Where(b => b.UserId.Equals(user.Id))
+            .CountAsync();
 
         var players = await _context.BankAccounts
             .AsNoTracking()
