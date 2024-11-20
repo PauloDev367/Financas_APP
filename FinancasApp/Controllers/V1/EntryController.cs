@@ -36,10 +36,12 @@ public class EntryController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllAsync(
         [FromQuery] int pageIndex = 1,
-        [FromQuery] int pageSize = 1
+        [FromQuery] int pageSize = 1,
+        [FromQuery] int? year = null,
+        [FromQuery] int? month = null
     )
     {
-        var response = await _service.GetAllAsync(_requestUser.User, pageIndex, pageSize);
+        var response = await _service.GetAllAsync(_requestUser.User, pageIndex, pageSize, year, month);
         return Ok(response);
     }
     // [HttpPut]

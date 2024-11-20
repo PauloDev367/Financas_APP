@@ -63,19 +63,30 @@ public class EntryService
 
         return data;
     }
-    public async Task<PaginatedListResponse<Entry>> GetAllAsync(User user, int pageIndex, int pageSize)
+    public async Task<PaginatedListResponse<Entry>> GetAllAsync(User user, int pageIndex, int pageSize, int? year, int? month)
     {
         var count = await _context.Entries
             .Where(b => b.UserId.Equals(user.Id))
             .CountAsync();
 
-        var data = await _context.Entries
+        var data = _context.Entries
             .AsNoTracking()
             .Where(b => b.UserId.Equals(user.Id))
             .OrderBy(b => b.Id)
             .Skip((pageIndex - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
+            .Take(pageSize);
+
+        if (month != null)
+        {
+            data = data.Where(e => e.CreatedAt.Month == month);
+        }
+        if (year != null)
+        {
+            data = data.Where(e => e.CreatedAt.Year == year);
+        }
+
+
+        await data.ToListAsync();
 
         var responseData = data.Select(d => d).ToList();
         return PaginatedListResponse<Entry>.Create(responseData, pageIndex, pageSize, count);
