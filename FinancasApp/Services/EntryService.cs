@@ -63,7 +63,7 @@ public class EntryService
 
         return data;
     }
-    public async Task<PaginatedListResponse<Entry>> GetAllAsync(User user, int pageIndex, int pageSize, int? year, int? month)
+    public async Task<PaginatedListResponse<Entry>> GetAllAsync(User user, Guid bankAccountId, int pageIndex, int pageSize, int? year, int? month)
     {
         var count = await _context.Entries
             .Where(b => b.UserId.Equals(user.Id))
@@ -72,6 +72,7 @@ public class EntryService
         var data = _context.Entries
             .AsNoTracking()
             .Where(b => b.UserId.Equals(user.Id))
+            .Where(b => b.BankAccountId == bankAccountId)
             .OrderBy(b => b.Id)
             .Skip((pageIndex - 1) * pageSize)
             .Take(pageSize);
@@ -181,7 +182,7 @@ public class EntryService
         {
             entry.Note = request.Note;
         }
-      
+
         _context.Entries.Update(entry);
         await _context.SaveChangesAsync();
 

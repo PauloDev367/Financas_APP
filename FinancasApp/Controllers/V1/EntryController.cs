@@ -33,15 +33,16 @@ public class EntryController : ControllerBase
         var response = await _service.GetOneAsync(_requestUser.User, id);
         return Ok(response);
     }
-    [HttpGet]
+    [HttpGet("bank-account/{bankAccountId}")]
     public async Task<IActionResult> GetAllAsync(
+        [FromRoute] Guid bankAccountId,
         [FromQuery] int pageIndex = 1,
-        [FromQuery] int pageSize = 1,
+        [FromQuery] int pageSize = 10,
         [FromQuery] int? year = null,
         [FromQuery] int? month = null
     )
     {
-        var response = await _service.GetAllAsync(_requestUser.User, pageIndex, pageSize, year, month);
+        var response = await _service.GetAllAsync(_requestUser.User, bankAccountId,pageIndex, pageSize, year, month);
         return Ok(response);
     }
     [HttpDelete("{id}")]
