@@ -104,15 +104,35 @@ public class EntryService
         _context.Entries.Remove(data);
         await _context.SaveChangesAsync();
     }
-    // public async Task<Entry> UpdateAsync(User user, Guid id, UpdateEntryRequest request)
-    // {
+    public async Task<Entry> ChangeReceivedStatusAsync(User user, Guid id, UpdateEntryReceivedStatusRequest request)
+    {
+        var entry = await _context.Entries
+                    .FirstOrDefaultAsync(e => e.Id == id && e.UserId == user.Id);
 
-    // }
-    // public async Task<Entry> ChangeReceivedStatusAsync(User user, Guid id, UpdateEntryReceivedStatusRequest request)
-    // {
+        if (entry == null)
+        {
+            throw new ModelNotFoundException("Entry not found");
+        }
 
-    // }
+        entry.Payed = request.Payed;
+        if (request.Payed == false && request.DateWhenPayed == null)
+        {
+            entry.DateWhenPayed = null;
+        }
+        else
+        {
+            entry.DateWhenPayed = request.DateWhenPayed;
+        }
+        _context.Entries.Update(entry);
+        await _context.SaveChangesAsync();
+
+        return entry;
+    }
     // public async Task<Entry> UpdateEntryTypeAsync(User user, Guid id, UpdateEntryTypeRequest request)
+    // {
+
+    // }
+    // public async Task<Entry> UpdateAsync(User user, Guid id, UpdateEntryRequest request)
     // {
 
     // }

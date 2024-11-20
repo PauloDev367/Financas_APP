@@ -11,5 +11,5 @@ public class UpdateEntryReceivedStatusRequest
 
     [RequiredIf("Payed", true)]
     [DataType(DataType.Date)]
-    public DateTime? DataWhenPayed { get; init; }
+    public DateTime? DateWhenPayed { get; init; }
 }

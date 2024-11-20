@@ -50,22 +50,22 @@ public class EntryController : ControllerBase
         await _service.DeleteAsync(_requestUser.User, id);
         return NoContent();
     }
-    // [HttpPut]
-    // public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UpdateEntryRequest request)
-    // {
-    //     var response = await _service.UpdateAsync(_requestUser.User, id, request);
-
-    // }
-    // [HttpPatch("{id}/received")]
-    // public async Task<IActionResult> ChangeReceivedStatusAsync([FromBody] UpdateEntryReceivedStatusRequest request, Guid id)
-    // {
-    //     var response = await _service.ChangeReceivedStatusAsync(_requestUser.User, id, request);
-
-    // }
+    [HttpPatch("{id}/received")]
+    public async Task<IActionResult> ChangeReceivedStatusAsync([FromBody] UpdateEntryReceivedStatusRequest request, Guid id)
+    {
+        var response = await _service.ChangeReceivedStatusAsync(_requestUser.User, id, request);
+        return Ok(response);
+    }
     // [HttpPatch("{id}/entry-type")]
     // public async Task<IActionResult> UpdateEntryTypeAsync([FromBody] UpdateEntryTypeRequest request, Guid id)
     // {
     //     var response = await _service.UpdateEntryTypeAsync(_requestUser.User, id, request);
+
+    // }
+    // [HttpPut]
+    // public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UpdateEntryRequest request)
+    // {
+    //     var response = await _service.UpdateAsync(_requestUser.User, id, request);
 
     // }
 
