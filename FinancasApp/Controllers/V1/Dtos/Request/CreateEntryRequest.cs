@@ -11,17 +11,17 @@ public class CreateEntryRequest
     public string EntryType { get; init; }
 
     [RequiredIf("EntryType", "INCOME")]
-    public int? IncomeCategoryId { get; init; }
+    public Guid? IncomeCategoryId { get; init; }
 
     [RequiredIf("EntryType", "EXPENSE")]
-    public int? ExpenseCategoryId { get; init; }
+    public Guid? ExpenseCategoryId { get; init; }
 
     [Required]
     [StringLength(255)]
     public string Title { get; init; }
 
     [Required]
-    public int BankAccountId { get; init; }
+    public Guid BankAccountId { get; init; }
 
     public string? Note { get; init; }
 

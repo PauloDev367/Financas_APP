@@ -6,6 +6,7 @@ namespace FinancasApp.Models;
 public class Entry
 {
     public Guid Id { get; set; }
+    public string Title { get; set; }
     public Guid? IncomeCategoryId { get; set; }
     public IncomeCategory? IncomeCategory { get; set; }
     public Guid? ExpenseCategoryId { get; set; }
