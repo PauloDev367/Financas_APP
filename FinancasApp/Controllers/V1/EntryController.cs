@@ -44,16 +44,16 @@ public class EntryController : ControllerBase
         var response = await _service.GetAllAsync(_requestUser.User, pageIndex, pageSize, year, month);
         return Ok(response);
     }
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteAsync(Guid id)
+    {
+        await _service.DeleteAsync(_requestUser.User, id);
+        return NoContent();
+    }
     // [HttpPut]
     // public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UpdateEntryRequest request)
     // {
     //     var response = await _service.UpdateAsync(_requestUser.User, id, request);
-
-    // }
-    // [HttpDelete("{id}")]
-    // public async Task<IActionResult> DeleteAsync(Guid id)
-    // {
-    //     var response = await _service.DeleteAsync(id);
 
     // }
     // [HttpPatch("{id}/received")]

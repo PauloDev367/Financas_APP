@@ -91,11 +91,20 @@ public class EntryService
         var responseData = data.Select(d => d).ToList();
         return PaginatedListResponse<Entry>.Create(responseData, pageIndex, pageSize, count);
     }
-    // public async Task<Entry> UpdateAsync(User user, Guid id, UpdateEntryRequest request)
-    // {
+    public async Task DeleteAsync(User user, Guid id)
+    {
+        var data = await _context.Entries
+            .FirstOrDefaultAsync(e => e.Id == id && e.UserId == user.Id);
 
-    // }
-    // public async Task DeleteAsync(User user, Guid id)
+        if (data == null)
+        {
+            throw new ModelNotFoundException("Entry not found");
+        }
+
+        _context.Entries.Remove(data);
+        await _context.SaveChangesAsync();
+    }
+    // public async Task<Entry> UpdateAsync(User user, Guid id, UpdateEntryRequest request)
     // {
 
     // }
