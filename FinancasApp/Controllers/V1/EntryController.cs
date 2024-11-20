@@ -56,12 +56,12 @@ public class EntryController : ControllerBase
         var response = await _service.ChangeReceivedStatusAsync(_requestUser.User, id, request);
         return Ok(response);
     }
-    // [HttpPatch("{id}/entry-type")]
-    // public async Task<IActionResult> UpdateEntryTypeAsync([FromBody] UpdateEntryTypeRequest request, Guid id)
-    // {
-    //     var response = await _service.UpdateEntryTypeAsync(_requestUser.User, id, request);
-
-    // }
+    [HttpPatch("{id}/entry-type")]
+    public async Task<IActionResult> UpdateEntryTypeAsync([FromBody] UpdateEntryTypeRequest request, Guid id)
+    {
+        var response = await _service.UpdateEntryTypeAsync(_requestUser.User, id, request);
+        return Ok(response);
+    }
     // [HttpPut]
     // public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UpdateEntryRequest request)
     // {

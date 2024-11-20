@@ -128,10 +128,36 @@ public class EntryService
 
         return entry;
     }
-    // public async Task<Entry> UpdateEntryTypeAsync(User user, Guid id, UpdateEntryTypeRequest request)
-    // {
+    public async Task<Entry> UpdateEntryTypeAsync(User user, Guid id, UpdateEntryTypeRequest request)
+    {
+        var entry = await _context.Entries
+                    .FirstOrDefaultAsync(e => e.Id == id && e.UserId == user.Id);
 
-    // }
+        if (entry == null)
+        {
+            throw new ModelNotFoundException("Entry not found");
+        }
+
+        var entryType = request.EntryType;
+        EntryType finalEntryType = EntryType.EXPENSE;
+        
+        if (entryType == EntryType.EXPENSE.ToString())
+        {
+            entry.ExpenseCategoryId = request.ExpenseCategoryId;
+            entry.IncomeCategoryId = null;
+            finalEntryType = EntryType.EXPENSE;
+        }
+        if (entryType == EntryType.INCOME.ToString())
+        {
+            entry.IncomeCategoryId = request.IncomeCategoryId;
+            entry.ExpenseCategoryId = null;
+            finalEntryType = EntryType.INCOME;
+        }
+
+        entry.EntryType = finalEntryType;
+
+        return entry;
+    }
     // public async Task<Entry> UpdateAsync(User user, Guid id, UpdateEntryRequest request)
     // {
 

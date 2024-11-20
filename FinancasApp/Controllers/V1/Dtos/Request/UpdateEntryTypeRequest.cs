@@ -10,8 +10,8 @@ public class UpdateEntryTypeRequest
     public string EntryType { get; init; }
 
     [RequiredIf("EntryType", "INCOME")]
-    public int? IncomeCategoryId { get; init; }
+    public Guid? IncomeCategoryId { get; init; }
 
     [RequiredIf("EntryType", "EXPENSE")]
-    public int? ExpenseCategoryId { get; init; }
+    public Guid? ExpenseCategoryId { get; init; }
 }
