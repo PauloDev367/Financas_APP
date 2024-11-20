@@ -13,19 +13,14 @@ namespace FinancasApp.Services;
 public class ExpenseCategoryService
 {
     private readonly AppDbContext _context;
-    private readonly UserManager<User> _userManager;
-    public ExpenseCategoryService(AppDbContext context, UserManager<User> userManager)
+
+    public ExpenseCategoryService(AppDbContext context)
     {
         _context = context;
-        _userManager = userManager;
     }
 
-    public async Task<ExpenseCategory> CreateAsync(string userEmail, CreateExpenseCategoryRequest request)
+    public async Task<ExpenseCategory> CreateAsync(User user, CreateExpenseCategoryRequest request)
     {
-        var user = await _userManager.FindByEmailAsync(userEmail);
-        if (user == null)
-            throw new UnauthorizedActionException("You don't have the permission for this action");
-
         var expenseCategory = new ExpenseCategory();
         expenseCategory.Name = request.Name;
         expenseCategory.Icon = request.Icon;
@@ -38,12 +33,8 @@ public class ExpenseCategoryService
 
         return expenseCategory;
     }
-    public async Task<ExpenseCategory> GetOneAsync(string userEmail, Guid id)
+    public async Task<ExpenseCategory> GetOneAsync(User user, Guid id)
     {
-        var user = await _userManager.FindByEmailAsync(userEmail);
-        if (user == null)
-            throw new UnauthorizedActionException("You don't have the permission for this action");
-
         var data = await _context.ExpenseCategories.FirstOrDefaultAsync(
             x => x.Id == id && x.UserId == user.Id
         );
@@ -54,12 +45,8 @@ public class ExpenseCategoryService
         }
         return data;
     }
-    public async Task<PaginatedListResponse<ExpenseCategory>> GetAllAsync(string userEmail, int pageIndex, int pageSize)
+    public async Task<PaginatedListResponse<ExpenseCategory>> GetAllAsync(User user, int pageIndex, int pageSize)
     {
-        var user = await _userManager.FindByEmailAsync(userEmail);
-        if (user == null)
-            throw new UnauthorizedActionException("You don't have the permission for this action");
-
         var count = await _context.ExpenseCategories
             .Where(b => b.UserId.Equals(user.Id))
             .CountAsync();
@@ -75,12 +62,8 @@ public class ExpenseCategoryService
         var responseData = data.Select(d => d).ToList();
         return PaginatedListResponse<ExpenseCategory>.Create(responseData, pageIndex, pageSize, count);
     }
-    public async Task<ExpenseCategory> UpdateAsync(string userEmail, Guid id, UpdateExpenseCategoryRequest request)
+    public async Task<ExpenseCategory> UpdateAsync(User user, Guid id, UpdateExpenseCategoryRequest request)
     {
-        var user = await _userManager.FindByEmailAsync(userEmail);
-        if (user == null)
-            throw new UnauthorizedActionException("You don't have the permission for this action");
-
         var expenseCategory = await _context.ExpenseCategories.FirstOrDefaultAsync(
                    x => x.Id == id && x.UserId == user.Id
                );
@@ -107,12 +90,8 @@ public class ExpenseCategoryService
 
         return expenseCategory;
     }
-    public async Task DeleteAsync(string userEmail, Guid id)
+    public async Task DeleteAsync(User user, Guid id)
     {
-        var user = await _userManager.FindByEmailAsync(userEmail);
-        if (user == null)
-            throw new UnauthorizedActionException("You don't have the permission for this action");
-
         var expenseCategory = await _context.ExpenseCategories.FirstOrDefaultAsync(
                 x => x.Id == id && x.UserId == user.Id
             );

@@ -13,7 +13,7 @@ namespace FinancasApp.Controllers.V1;
 public class BankAccountController : ControllerBase
 {
     private BankAccountService _bankAccountService;
-  private readonly RequestUser _requestUser;
+    private readonly RequestUser _requestUser;
     public BankAccountController(BankAccountService bankAccountService, RequestUser requestUser)
     {
         _bankAccountService = bankAccountService;

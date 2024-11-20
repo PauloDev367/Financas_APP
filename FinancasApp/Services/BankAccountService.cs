@@ -13,12 +13,10 @@ namespace FinancasApp.Services;
 public class BankAccountService
 {
     private readonly AppDbContext _context;
-    private readonly UserManager<User> _userManager;
 
-    public BankAccountService(AppDbContext context, UserManager<User> userManager)
+    public BankAccountService(AppDbContext context)
     {
         _context = context;
-        _userManager = userManager;
     }
 
     public async Task<CreatedBankAccountResponse> CreateAsync(User user, CreateBankAccountRequest request)
