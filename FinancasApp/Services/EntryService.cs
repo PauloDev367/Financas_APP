@@ -131,7 +131,7 @@ public class EntryService
     public async Task<Entry> UpdateEntryTypeAsync(User user, Guid id, UpdateEntryTypeRequest request)
     {
         var entry = await _context.Entries
-                    .FirstOrDefaultAsync(e => e.Id == id && e.UserId == user.Id);
+            .FirstOrDefaultAsync(e => e.Id == id && e.UserId == user.Id);
 
         if (entry == null)
         {
@@ -140,7 +140,7 @@ public class EntryService
 
         var entryType = request.EntryType;
         EntryType finalEntryType = EntryType.EXPENSE;
-        
+
         if (entryType == EntryType.EXPENSE.ToString())
         {
             entry.ExpenseCategoryId = request.ExpenseCategoryId;
@@ -155,12 +155,37 @@ public class EntryService
         }
 
         entry.EntryType = finalEntryType;
+        _context.Entries.Update(entry);
+        await _context.SaveChangesAsync();
+        return entry;
+    }
+    public async Task<Entry> UpdateAsync(User user, Guid id, UpdateEntryRequest request)
+    {
+        var entry = await _context.Entries
+            .FirstOrDefaultAsync(e => e.Id == id && e.UserId == user.Id);
+
+        if (entry == null)
+        {
+            throw new ModelNotFoundException("Entry not found");
+        }
+
+        if (!string.IsNullOrEmpty(request.Title))
+        {
+            entry.Title = request.Title;
+        }
+        if (request.BankAccountId != null)
+        {
+            entry.BankAccountId = (Guid)request.BankAccountId;
+        }
+        if (!string.IsNullOrEmpty(request.Note))
+        {
+            entry.Note = request.Note;
+        }
+      
+        _context.Entries.Update(entry);
+        await _context.SaveChangesAsync();
 
         return entry;
     }
-    // public async Task<Entry> UpdateAsync(User user, Guid id, UpdateEntryRequest request)
-    // {
-
-    // }
 
 }

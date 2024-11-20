@@ -62,12 +62,12 @@ public class EntryController : ControllerBase
         var response = await _service.UpdateEntryTypeAsync(_requestUser.User, id, request);
         return Ok(response);
     }
-    // [HttpPut]
-    // public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UpdateEntryRequest request)
-    // {
-    //     var response = await _service.UpdateAsync(_requestUser.User, id, request);
-
-    // }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UpdateEntryRequest request)
+    {
+        var response = await _service.UpdateAsync(_requestUser.User, id, request);
+        return Ok(response);
+    }
 
 
 }
