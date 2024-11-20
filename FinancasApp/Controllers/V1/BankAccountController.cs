@@ -1,4 +1,5 @@
 using System;
+using FinancasApp.Configurations;
 using FinancasApp.Controllers.V1.Dtos.Request;
 using FinancasApp.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -12,17 +13,17 @@ namespace FinancasApp.Controllers.V1;
 public class BankAccountController : ControllerBase
 {
     private BankAccountService _bankAccountService;
-
-    public BankAccountController(BankAccountService bankAccountService)
+  private readonly RequestUser _requestUser;
+    public BankAccountController(BankAccountService bankAccountService, RequestUser requestUser)
     {
         _bankAccountService = bankAccountService;
+        _requestUser = requestUser;
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] CreateBankAccountRequest request)
     {
-        var userEmail = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        var created = await _bankAccountService.CreateAsync(userEmail, request);
+        var created = await _bankAccountService.CreateAsync(_requestUser.User, request);
 
         return Ok(created);
     }
@@ -32,29 +33,25 @@ public class BankAccountController : ControllerBase
         [FromQuery] int pageSize = 1
     )
     {
-        var userEmail = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        var data = await _bankAccountService.GetAllPaginatedAsync(pageIndex, pageSize, userEmail);
+        var data = await _bankAccountService.GetAllPaginatedAsync(pageIndex, pageSize, _requestUser.User);
         return Ok(data);
     }
     [HttpGet("{id}")]
     public async Task<IActionResult> GetOneAsync([FromRoute] Guid id)
     {
-        var userEmail = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        var data = await _bankAccountService.GetOneAsync(userEmail, id);
+        var data = await _bankAccountService.GetOneAsync(_requestUser.User, id);
         return Ok(data);
     }
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
     {
-        var userEmail = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        await _bankAccountService.DeleteAsync(userEmail, id);
+        await _bankAccountService.DeleteAsync(_requestUser.User, id);
         return NoContent();
     }
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateBankAccountRequest request, [FromRoute] Guid id)
     {
-        var userEmail = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        var update = await _bankAccountService.UpdateAsync(userEmail, request, id);
+        var update = await _bankAccountService.UpdateAsync(_requestUser.User, request, id);
         return Ok(update);
     }
 

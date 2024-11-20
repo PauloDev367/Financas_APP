@@ -21,12 +21,8 @@ public class BankAccountService
         _userManager = userManager;
     }
 
-    public async Task<CreatedBankAccountResponse> CreateAsync(string userEmail, CreateBankAccountRequest request)
+    public async Task<CreatedBankAccountResponse> CreateAsync(User user, CreateBankAccountRequest request)
     {
-        var user = await _userManager.FindByEmailAsync(userEmail);
-        if (user == null)
-            throw new UnauthorizedActionException("You don't have the permission for this action");
-
         if (_context.BankAccounts.Any(b => b.Name == request.Name))
             throw new DuplicatedAccountBankException("Do you already have an account with this name!");
 
@@ -40,12 +36,8 @@ public class BankAccountService
         return new CreatedBankAccountResponse(bankAccount);
     }
 
-    public async Task<CreatedBankAccountResponse> UpdateAsync(string userEmail, UpdateBankAccountRequest request, Guid bankAccountId)
+    public async Task<CreatedBankAccountResponse> UpdateAsync(User user, UpdateBankAccountRequest request, Guid bankAccountId)
     {
-        var user = await _userManager.FindByEmailAsync(userEmail);
-        if (user == null)
-            throw new UnauthorizedActionException("You don't have the permission for this action");
-
         var bankAccount = await _context.BankAccounts
             .FirstOrDefaultAsync(x => x.Id.Equals(bankAccountId) && x.UserId.Equals(user.Id));
 
@@ -63,12 +55,8 @@ public class BankAccountService
         return new CreatedBankAccountResponse(bankAccount);
     }
 
-    public async Task DeleteAsync(string userEmail, Guid bankAccountId)
+    public async Task DeleteAsync(User user, Guid bankAccountId)
     {
-        var user = await _userManager.FindByEmailAsync(userEmail);
-        if (user == null)
-            throw new UnauthorizedActionException("You don't have the permission for this action");
-
         var bankAccount = await _context.BankAccounts
                    .FirstOrDefaultAsync(x => x.Id.Equals(bankAccountId) && x.UserId.Equals(user.Id));
 
@@ -79,12 +67,8 @@ public class BankAccountService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<CreatedBankAccountResponse> GetOneAsync(string userEmail, Guid bankAccountId)
+    public async Task<CreatedBankAccountResponse> GetOneAsync(User user, Guid bankAccountId)
     {
-        var user = await _userManager.FindByEmailAsync(userEmail);
-        if (user == null)
-            throw new UnauthorizedActionException("You don't have the permission for this action");
-
         var bankAccount = await _context.BankAccounts
                    .FirstOrDefaultAsync(x => x.Id.Equals(bankAccountId) && x.UserId.Equals(user.Id));
 
@@ -94,12 +78,8 @@ public class BankAccountService
         return new CreatedBankAccountResponse(bankAccount);
     }
 
-    public async Task<PaginatedListResponse<CreatedBankAccountResponse>> GetAllPaginatedAsync(int pageIndex, int pageSize, string userEmail)
+    public async Task<PaginatedListResponse<CreatedBankAccountResponse>> GetAllPaginatedAsync(int pageIndex, int pageSize, User user)
     {
-        var user = await _userManager.FindByEmailAsync(userEmail);
-        if (user == null)
-            throw new UnauthorizedActionException("You don't have the permission for this action");
-
         var count = await _context.BankAccounts
             .Where(b => b.UserId.Equals(user.Id))
             .CountAsync();
