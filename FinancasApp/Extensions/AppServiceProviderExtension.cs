@@ -16,6 +16,7 @@ public static class AppServiceProviderExtension
         service.AddHttpContextAccessor(); 
         service.AddTransient<IdentityService, IdentityService>();
         service.AddTransient<IBankAccountRepository, BankAccountRepository>();
+        service.AddTransient<IEntryRepository, EntryRepository>();
         service.AddScoped<BankAccountService>();
         service.AddScoped<ExpenseCategoryService>();
         service.AddScoped<IncomeCategoryService>();

@@ -1,21 +1,22 @@
 using System;
 using FinancasApp.Controllers.V1.Dtos.Request;
 using FinancasApp.Controllers.V1.Dtos.Response;
-using FinancasApp.Data;
 using FinancasApp.Enums;
 using FinancasApp.Exceptions;
 using FinancasApp.Models;
-using Microsoft.EntityFrameworkCore;
+using FinancasApp.Repositories.Ports;
 
 namespace FinancasApp.Services;
 
 public class EntryService
 {
-    private readonly AppDbContext _context;
-    public EntryService(AppDbContext context)
+    private readonly IEntryRepository _repository;
+
+    public EntryService(IEntryRepository repository)
     {
-        _context = context;
+        _repository = repository;
     }
+
     public async Task<Entry> CreateAsync(User user, CreateEntryRequest request)
     {
         var entryType = request.EntryType;
@@ -46,74 +47,40 @@ public class EntryService
             entry.ExpenseCategoryId = request.ExpenseCategoryId;
         }
 
-        await _context.Entries.AddAsync(entry);
-        await _context.SaveChangesAsync();
+        await _repository.CreateAsync(entry);
         return entry;
     }
     public async Task<Entry> GetOneAsync(User user, Guid id)
     {
-        var data = await _context.Entries
-            .AsNoTracking()
-            .FirstOrDefaultAsync(e => e.Id == id && e.UserId == user.Id);
+        var data = await _repository.GetOneAsync(user, id);
 
         if (data == null)
-        {
             throw new ModelNotFoundException("Entry not found");
-        }
 
         return data;
     }
     public async Task<PaginatedListResponse<Entry>> GetAllAsync(User user, Guid bankAccountId, int pageIndex, int pageSize, int? year, int? month)
     {
-        var count = await _context.Entries
-            .Where(b => b.UserId.Equals(user.Id))
-            .CountAsync();
+        var count = await _repository.CountAsync(user.Id);
+        var responseData = await _repository.GetAllPaginateAsync(user, bankAccountId, pageIndex, pageSize, year, month);
 
-        var data = _context.Entries
-            .AsNoTracking()
-            .Where(b => b.UserId.Equals(user.Id))
-            .Where(b => b.BankAccountId == bankAccountId)
-            .OrderBy(b => b.Id)
-            .Skip((pageIndex - 1) * pageSize)
-            .Take(pageSize);
-
-        if (month != null)
-        {
-            data = data.Where(e => e.CreatedAt.Month == month);
-        }
-        if (year != null)
-        {
-            data = data.Where(e => e.CreatedAt.Year == year);
-        }
-
-
-        await data.ToListAsync();
-
-        var responseData = data.Select(d => d).ToList();
         return PaginatedListResponse<Entry>.Create(responseData, pageIndex, pageSize, count);
     }
     public async Task DeleteAsync(User user, Guid id)
     {
-        var data = await _context.Entries
-            .FirstOrDefaultAsync(e => e.Id == id && e.UserId == user.Id);
+        var data = await _repository.GetOneAsync(user, id);
 
         if (data == null)
-        {
             throw new ModelNotFoundException("Entry not found");
-        }
 
-        _context.Entries.Remove(data);
-        await _context.SaveChangesAsync();
+        await _repository.DeleteAsync(data);
     }
     public async Task<Entry> ChangeReceivedStatusAsync(User user, Guid id, UpdateEntryReceivedStatusRequest request)
     {
-        var entry = await _context.Entries
-                    .FirstOrDefaultAsync(e => e.Id == id && e.UserId == user.Id);
+        var entry = await _repository.GetOneAsync(user, id);
 
         if (entry == null)
-        {
             throw new ModelNotFoundException("Entry not found");
-        }
 
         entry.Payed = request.Payed;
         if (request.Payed == false && request.DateWhenPayed == null)
@@ -124,20 +91,16 @@ public class EntryService
         {
             entry.DateWhenPayed = request.DateWhenPayed;
         }
-        _context.Entries.Update(entry);
-        await _context.SaveChangesAsync();
+        await _repository.UpdateAsync(entry);
 
         return entry;
     }
     public async Task<Entry> UpdateEntryTypeAsync(User user, Guid id, UpdateEntryTypeRequest request)
     {
-        var entry = await _context.Entries
-            .FirstOrDefaultAsync(e => e.Id == id && e.UserId == user.Id);
+        var entry = await _repository.GetOneAsync(user, id);
 
         if (entry == null)
-        {
             throw new ModelNotFoundException("Entry not found");
-        }
 
         var entryType = request.EntryType;
         EntryType finalEntryType = EntryType.EXPENSE;
@@ -156,14 +119,13 @@ public class EntryService
         }
 
         entry.EntryType = finalEntryType;
-        _context.Entries.Update(entry);
-        await _context.SaveChangesAsync();
+
+        await _repository.UpdateAsync(entry);
         return entry;
     }
     public async Task<Entry> UpdateAsync(User user, Guid id, UpdateEntryRequest request)
     {
-        var entry = await _context.Entries
-            .FirstOrDefaultAsync(e => e.Id == id && e.UserId == user.Id);
+        var entry = await _repository.GetOneAsync(user, id);
 
         if (entry == null)
         {
@@ -183,9 +145,7 @@ public class EntryService
             entry.Note = request.Note;
         }
 
-        _context.Entries.Update(entry);
-        await _context.SaveChangesAsync();
-
+        await _repository.UpdateAsync(entry);
         return entry;
     }
 
