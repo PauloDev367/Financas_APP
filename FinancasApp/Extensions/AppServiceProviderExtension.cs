@@ -13,10 +13,11 @@ public static class AppServiceProviderExtension
 {
     public static void LoadDependencies(this IServiceCollection service)
     {
-        service.AddHttpContextAccessor(); 
+        service.AddHttpContextAccessor();
         service.AddTransient<IdentityService, IdentityService>();
         service.AddTransient<IBankAccountRepository, BankAccountRepository>();
         service.AddTransient<IEntryRepository, EntryRepository>();
+        service.AddTransient<IExpenseCategoryRepository, ExpenseCategoryRepository>();
         service.AddScoped<BankAccountService>();
         service.AddScoped<ExpenseCategoryService>();
         service.AddScoped<IncomeCategoryService>();
