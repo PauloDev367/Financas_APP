@@ -4,6 +4,7 @@ using FinancasApp.Controllers.V1.Dtos.Response;
 using FinancasApp.Data;
 using FinancasApp.Exceptions;
 using FinancasApp.Models;
+using FinancasApp.Repositories.Ports;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +12,11 @@ namespace FinancasApp.Services;
 
 public class IncomeCategoryService
 {
-    private readonly AppDbContext _context;
-    public IncomeCategoryService(AppDbContext context)
+    private readonly IIncomeCategoryRepository _repository;
+
+    public IncomeCategoryService(IIncomeCategoryRepository repository)
     {
-        _context = context;
+        _repository = repository;
     }
 
     public async Task<IncomeCategory> CreateAsync(User user, CreateIncomeCategoryRequest request)
@@ -26,50 +28,28 @@ public class IncomeCategoryService
         incomeCategory.IconColor = request.IconColor;
         incomeCategory.UserId = user.Id;
 
-        await _context.IncomeCategories.AddAsync(incomeCategory);
-        await _context.SaveChangesAsync();
+        await _repository.CreateAsync(incomeCategory);
 
         return incomeCategory;
     }
     public async Task<IncomeCategory> GetOneAsync(User user, Guid id)
     {
-        var data = await _context.IncomeCategories.FirstOrDefaultAsync(
-            x => x.Id == id && x.UserId == user.Id
-        );
-
+        var data = await _repository.GetOneAsync(user, id);
         if (data == null)
-        {
             throw new ModelNotFoundException("Income category not found");
-        }
         return data;
     }
     public async Task<PaginatedListResponse<IncomeCategory>> GetAllAsync(User user, int pageIndex, int pageSize)
     {
-        var count = await _context.IncomeCategories
-            .Where(b => b.UserId.Equals(user.Id))
-            .CountAsync();
-
-        var data = await _context.IncomeCategories
-            .AsNoTracking()
-            .Where(b => b.UserId.Equals(user.Id))
-            .OrderBy(b => b.Id)
-            .Skip((pageIndex - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-
-        var responseData = data.Select(d => d).ToList();
+        var count = await _repository.CountAsync(user);
+        var responseData = await _repository.GetAllAsync(user, pageIndex, pageSize);
         return PaginatedListResponse<IncomeCategory>.Create(responseData, pageIndex, pageSize, count);
     }
     public async Task<IncomeCategory> UpdateAsync(User user, Guid id, UpdateIncomeCategoryRequest request)
     {
-        var incomeCategory = await _context.IncomeCategories.FirstOrDefaultAsync(
-                   x => x.Id == id && x.UserId == user.Id
-               );
-
+        var incomeCategory = await _repository.GetOneAsync(user, id);
         if (incomeCategory == null)
-        {
             throw new ModelNotFoundException("Income category not found");
-        }
 
         if (!string.IsNullOrEmpty(request.Name))
             incomeCategory.Name = request.Name;
@@ -83,18 +63,15 @@ public class IncomeCategoryService
         if (!string.IsNullOrEmpty(request.IconColor))
             incomeCategory.IconColor = request.IconColor;
 
-        _context.IncomeCategories.Update(incomeCategory);
-        await _context.SaveChangesAsync();
+        await _repository.UpdateAsync(incomeCategory);
 
         return incomeCategory;
     }
     public async Task DeleteAsync(User user, Guid id)
     {
-        var incomeCategory = await _context.IncomeCategories.FirstOrDefaultAsync(
-                x => x.Id == id && x.UserId == user.Id
-            );
-
-        _context.IncomeCategories.Remove(incomeCategory);
-        await _context.SaveChangesAsync();
+        var incomeCategory = await _repository.GetOneAsync(user, id);
+        if (incomeCategory == null)
+            throw new ModelNotFoundException("Income category not found");
+        await _repository.DeleteAsync(incomeCategory);
     }
 }

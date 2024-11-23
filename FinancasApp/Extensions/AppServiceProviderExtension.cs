@@ -18,6 +18,7 @@ public static class AppServiceProviderExtension
         service.AddTransient<IBankAccountRepository, BankAccountRepository>();
         service.AddTransient<IEntryRepository, EntryRepository>();
         service.AddTransient<IExpenseCategoryRepository, ExpenseCategoryRepository>();
+        service.AddTransient<IIncomeCategoryRepository, IncomeCategoryRepository>();
         service.AddScoped<BankAccountService>();
         service.AddScoped<ExpenseCategoryService>();
         service.AddScoped<IncomeCategoryService>();
