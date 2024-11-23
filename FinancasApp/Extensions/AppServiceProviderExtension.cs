@@ -2,6 +2,8 @@ using System;
 using FinancasApp.Configurations;
 using FinancasApp.Exceptions;
 using FinancasApp.Models;
+using FinancasApp.Repositories;
+using FinancasApp.Repositories.Ports;
 using FinancasApp.Services;
 using Microsoft.AspNetCore.Identity;
 
@@ -13,6 +15,7 @@ public static class AppServiceProviderExtension
     {
         service.AddHttpContextAccessor(); 
         service.AddTransient<IdentityService, IdentityService>();
+        service.AddTransient<IBankAccountRepository, BankAccountRepository>();
         service.AddScoped<BankAccountService>();
         service.AddScoped<ExpenseCategoryService>();
         service.AddScoped<IncomeCategoryService>();
