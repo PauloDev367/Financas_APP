@@ -43,7 +43,7 @@ public class EntryRepository : IEntryRepository
             .Include(x => x.IncomeCategory)
             .Where(b => b.UserId.Equals(user.Id))
             .Where(b => b.BankAccountId == bankAccountId)
-            .OrderByDescending(b => b.Id)
+            .OrderByDescending(b => b.CreatedAt)
             .Skip((pageIndex - 1) * pageSize)
             .Take(pageSize);
 
