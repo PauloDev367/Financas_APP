@@ -16,8 +16,6 @@ public class CreateEntryRequest
     [RequiredIf("EntryType", "EXPENSE")]
     public Guid? ExpenseCategoryId { get; init; }
     [Required]
-    public float Price;
-    [Required]
     [StringLength(255)]
     public string Title { get; init; }
 
@@ -32,4 +30,6 @@ public class CreateEntryRequest
     [RequiredIf("Payed", true)]
     [DataType(DataType.Date)]
     public DateTime? DataWhenPayed { get; init; }
+    [Required]
+    public float Price { get; init; }
 }
