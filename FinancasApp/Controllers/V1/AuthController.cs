@@ -31,7 +31,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
     {
         var login = await _identityService.Login(request);
-        if (request != null)
+        if (login != null)
         {
             return Ok(new { login });
         }

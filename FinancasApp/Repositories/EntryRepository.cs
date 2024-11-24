@@ -39,6 +39,8 @@ public class EntryRepository : IEntryRepository
     {
         var data = _context.Entries
             .AsNoTracking()
+            .Include(x => x.ExpenseCategory)
+            .Include(x => x.IncomeCategory)
             .Where(b => b.UserId.Equals(user.Id))
             .Where(b => b.BankAccountId == bankAccountId)
             .OrderBy(b => b.Id)

@@ -13,6 +13,7 @@ public class Entry
     public ExpenseCategory? ExpenseCategory { get; set; }
     public Guid BankAccountId { get; set; }
     public string UserId { get; set; }
+    public float Price { get; set; }
     public string? Note { get; set; }
     public bool? Payed { get; set; }
     public DateTime? DateWhenPayed { get; set; }

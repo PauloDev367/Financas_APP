@@ -35,7 +35,8 @@ public class EntryService
             BankAccountId = request.BankAccountId,
             Note = request.Note,
             Payed = request.Payed,
-            DateWhenPayed = request.DataWhenPayed
+            DateWhenPayed = request.DataWhenPayed,
+            Price = request.Price
         };
 
         if (finalEntryType == EntryType.INCOME)

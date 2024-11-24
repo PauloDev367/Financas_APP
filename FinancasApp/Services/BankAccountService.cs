@@ -81,5 +81,4 @@ public class BankAccountService
 
         return PaginatedListResponse<CreatedBankAccountResponse>.Create(data, pageIndex, pageSize, count);
     }
-
 }
