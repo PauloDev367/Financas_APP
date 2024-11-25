@@ -60,12 +60,21 @@ public class EntryService
 
         return data;
     }
-    public async Task<PaginatedListResponse<Entry>> GetAllAsync(User user, Guid bankAccountId, int pageIndex, int pageSize, int? year, int? month)
+    public async Task<PaginatedListResponse<EntryResponse>> GetAllAsync(User user, Guid bankAccountId, int pageIndex, int pageSize, int? year, int? month)
     {
         var count = await _repository.CountAsync(user.Id);
         var responseData = await _repository.GetAllPaginateAsync(user, bankAccountId, pageIndex, pageSize, year, month);
+        var final = responseData.Select(r => new EntryResponse(r)).ToList();
 
-        return PaginatedListResponse<Entry>.Create(responseData, pageIndex, pageSize, count);
+        return PaginatedListResponse<EntryResponse>.Create(final, pageIndex, pageSize, count);
+    }
+    public async Task<EntryExpenseIncomeResumeResponse> GetEntryExpenseIncomeResumeAsync(User user, Guid bankAccountId, int? year, int? month)
+    {
+        var totalExpense = await _repository.CountByEntryTypeAsync(user, bankAccountId, EntryType.EXPENSE, year, month);
+        var totalIncome = await _repository.CountByEntryTypeAsync(user, bankAccountId, EntryType.INCOME, year, month);
+
+        var response = new EntryExpenseIncomeResumeResponse { TotalExpense = totalExpense, TotalIncome = totalIncome };
+        return response;
     }
     public async Task DeleteAsync(User user, Guid id)
     {
