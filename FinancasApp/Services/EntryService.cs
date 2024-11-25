@@ -68,6 +68,11 @@ public class EntryService
 
         return PaginatedListResponse<EntryResponse>.Create(final, pageIndex, pageSize, count);
     }
+    public async Task<List<TotalPerCategoryResponse>> GetTotalByCategoriesAsync(User user, Guid bankAccountId, int? year, int? month)
+    {
+        var data = await _repository.GetTotalByCategoriesAsync(user, bankAccountId, year, month);
+        return data;
+    }
     public async Task<EntryExpenseIncomeResumeResponse> GetEntryExpenseIncomeResumeAsync(User user, Guid bankAccountId, int? year, int? month)
     {
         var totalExpense = await _repository.CountByEntryTypeAsync(user, bankAccountId, EntryType.EXPENSE, year, month);

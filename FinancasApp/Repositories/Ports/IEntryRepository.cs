@@ -1,4 +1,5 @@
 using System;
+using FinancasApp.Controllers.V1.Dtos.Response;
 using FinancasApp.Enums;
 using FinancasApp.Models;
 
@@ -11,6 +12,7 @@ public interface IEntryRepository
     public Task<int> CountAsync(string userId);
     public Task<List<Entry>> GetAllPaginateAsync(User user, Guid bankAccountId, int pageIndex, int pageSize, int? year, int? month);
     public Task<int> CountByEntryTypeAsync(User user, Guid bankAccountId, EntryType entryType, int? year, int? month);
+    public Task<List<TotalPerCategoryResponse>> GetTotalByCategoriesAsync(User user, Guid bankAccountId, int? year, int? month);
     public Task DeleteAsync(Entry entry);
     public Task<Entry> UpdateAsync(Entry entry);
 }

@@ -57,6 +57,16 @@ public class EntryController : ControllerBase
         var response = await _service.GetEntryExpenseIncomeResumeAsync(_requestUser.User, bankAccountId, year, month);
         return Ok(response);
     }
+    [HttpGet("bank-account/{bankAccountId}/entry-per-category-resume")]
+    public async Task<IActionResult> GetPerCategoryResumeAsync(
+        [FromRoute] Guid bankAccountId,
+        [FromQuery] int? year = null,
+        [FromQuery] int? month = null
+    )
+    {
+        var response = await _service.GetTotalByCategoriesAsync(_requestUser.User, bankAccountId, year, month);
+        return Ok(response);
+    }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(Guid id)

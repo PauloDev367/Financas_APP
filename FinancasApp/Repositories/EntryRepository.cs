@@ -1,3 +1,4 @@
+using FinancasApp.Controllers.V1.Dtos.Response;
 using FinancasApp.Data;
 using FinancasApp.Enums;
 using FinancasApp.Models;
@@ -81,6 +82,80 @@ public class EntryRepository : IEntryRepository
         }
         var total = await data.CountAsync();
         return total;
+    }
+    public async Task<List<TotalPerCategoryResponse>> GetTotalByCategoriesAsync(User user, Guid bankAccountId, int? year, int? month)
+    {
+        var expenseCategories = await _context.ExpenseCategories
+            .AsNoTracking()
+            .Where(x => x.UserId == user.Id)
+            .ToListAsync();
+
+        var incomeCategories = await _context.IncomeCategories
+            .AsNoTracking()
+            .Where(x => x.UserId == user.Id)
+            .ToListAsync();
+
+        var response = new List<TotalPerCategoryResponse>();
+
+        foreach (var exp in expenseCategories)
+        {
+            var data = _context.Entries
+            .AsNoTracking()
+            .Where(b => b.UserId.Equals(user.Id))
+            .Where(b => b.ExpenseCategoryId == exp.Id)
+            .Where(b => b.BankAccountId == bankAccountId);
+
+            if (month != null)
+            {
+                data = data.Where(e => e.CreatedAt.Month == month);
+            }
+            if (year != null)
+            {
+                data = data.Where(e => e.CreatedAt.Year == year);
+            }
+            var total = await data.CountAsync();
+            var res = new TotalPerCategoryResponse
+            {
+                CategoryType = "EXPENSE",
+                Icon = exp.Icon,
+                IconBg = exp.IconBg,
+                IconColor = exp.IconColor,
+                Name = exp.Name,
+                Total = total
+            };
+            response.Add(res);
+        }
+
+        foreach (var inc in incomeCategories)
+        {
+            var data = _context.Entries
+            .AsNoTracking()
+            .Where(b => b.UserId.Equals(user.Id))
+            .Where(b => b.IncomeCategoryId == inc.Id)
+            .Where(b => b.BankAccountId == bankAccountId);
+
+            if (month != null)
+            {
+                data = data.Where(e => e.CreatedAt.Month == month);
+            }
+            if (year != null)
+            {
+                data = data.Where(e => e.CreatedAt.Year == year);
+            }
+            var total = await data.CountAsync();
+            var res = new TotalPerCategoryResponse
+            {
+                CategoryType = "INCOME",
+                Icon = inc.Icon,
+                IconBg = inc.IconBg,
+                IconColor = inc.IconColor,
+                Name = inc.Name,
+                Total = total
+            };
+            response.Add(res);
+        }
+
+        return response;
     }
     public async Task DeleteAsync(Entry entry)
     {
